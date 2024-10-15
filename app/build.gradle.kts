@@ -102,7 +102,8 @@ dependencies {
     implementation ("com.squareup.okhttp3:okhttp:4.12.0")
 
     //coil
-    implementation("io.coil-kt.coil3:coil-compose:3.0.0-rc01")
+    //implementation("io.coil-kt.coil3:coil-compose:3.0.0-rc01") <- bu versiyon hata verdi?!
+    implementation("io.coil-kt:coil-compose:2.4.0")
 
     //room
     val room_version = "2.6.1"

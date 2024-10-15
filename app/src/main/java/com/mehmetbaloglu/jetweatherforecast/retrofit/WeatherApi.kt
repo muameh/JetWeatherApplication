@@ -15,7 +15,7 @@ interface WeatherApi {
     @GET("forecast")
     suspend fun getFiveDaysForecast(
         @Query("q") query : String,
-        @Query("units") units: String = "imperial",
+        @Query("units") units: String = "metric",
         @Query("appid") appid: String = Constants.API_KEY
     ) : FiveDaysForecast
 

@@ -1,10 +1,12 @@
 package com.mehmetbaloglu.jetweatherforecast.navigation
 
 import androidx.compose.runtime.Composable
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.mehmetbaloglu.jetweatherforecast.ui.screens.MainScreen
+import com.mehmetbaloglu.jetweatherforecast.ui.screens.MainViewModel
 import com.mehmetbaloglu.jetweatherforecast.ui.screens.WeatherSplashScreen
 
 
@@ -18,7 +20,8 @@ fun WeatherNavigation() {
         }
 
         composable(route = WeatherScreens.MainScreen.name){
-            MainScreen(navController = navController)
+            val viewModel = hiltViewModel<MainViewModel>()
+            MainScreen(navController = navController,viewModel)
         }
 
         

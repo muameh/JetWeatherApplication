@@ -32,9 +32,7 @@ import kotlinx.coroutines.delay
 
 @Composable
 fun WeatherSplashScreen(navController: NavController){
-    val scale = remember {
-        Animatable(0f)
-    }
+    val scale = remember { Animatable(0f) }
 
     LaunchedEffect(
         key1 = true,
@@ -49,10 +47,11 @@ fun WeatherSplashScreen(navController: NavController){
                     }
                 )
             )
-            delay(2000L)
+            delay(1000L)
             navController.navigate(WeatherScreens.MainScreen.name)
         }
     )
+
     Surface(
         modifier = Modifier
             .padding(15.dp)

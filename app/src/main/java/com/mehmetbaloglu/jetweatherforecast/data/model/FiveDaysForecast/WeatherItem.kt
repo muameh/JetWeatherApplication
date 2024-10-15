@@ -3,7 +3,7 @@ package com.mehmetbaloglu.jetweatherforecast.data.model.FiveDaysForecast
 
 import com.google.gson.annotations.SerializedName
 
-data class Item0(
+data class WeatherItem(
     @SerializedName("clouds")
     val clouds: Clouds?,
     @SerializedName("dt")
@@ -13,13 +13,13 @@ data class Item0(
     @SerializedName("main")
     val main: Main?,
     @SerializedName("pop")
-    val pop: Int?,
+    val pop: Float?,
     @SerializedName("sys")
     val sys: Sys?,
     @SerializedName("visibility")
     val visibility: Int?,
     @SerializedName("weather")
-    val weather: List<Weather?>?,
+    val weatherObject: List<WeatherObject?>?,
     @SerializedName("wind")
     val wind: Wind?
 )

@@ -3,7 +3,7 @@ package com.mehmetbaloglu.jetweatherforecast.data.model.FiveDaysForecast
 
 import com.google.gson.annotations.SerializedName
 
-data class Weather(
+data class WeatherObject(
     @SerializedName("description")
     val description: String?,
     @SerializedName("icon")

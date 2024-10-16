@@ -11,7 +11,7 @@ data class FiveDaysForecast(
     @SerializedName("cod")
     val cod: String?,
     @SerializedName("list")
-    val list: List<WeatherItem?>?,
+    val listItem: kotlin.collections.List<ListItem?>?,
     @SerializedName("message")
     val message: Int?
 )

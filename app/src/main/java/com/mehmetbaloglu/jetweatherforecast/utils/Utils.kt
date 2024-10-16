@@ -40,6 +40,28 @@ object Utils {
         return result
     }
 
+    fun getUniqueDaysWithMaxTemp(listItems: List<ListItem?>?): List<ListItem> {
+        // Her gün için en yüksek sıcaklığı tutmak üzere bir harita oluşturuyoruz
+        val maxTempMap = mutableMapOf<String, ListItem>()
+
+        listItems?.forEach { item ->
+            // Tarihi sadece gün bilgisi olarak alıyoruz
+            val day = item?.dtTxt?.substring(0, 10) // "yyyy-mm-dd hh:mm:ss" formatında, sadece "yyyy-mm-dd" kısmı alınır
+
+            if (day != null) {
+                // Eğer gün daha önce kaydedilmemişse veya mevcut sıcaklık yeni sıcaklıktan büyükse, güncellemeyi yap
+                val currentMaxItem = maxTempMap[day]
+                if (currentMaxItem == null || item.main?.temp ?: Double.MIN_VALUE > currentMaxItem.main?.temp ?: Double.MIN_VALUE) {
+                    maxTempMap[day] = item
+                }
+            }
+        }
+
+        // En yüksek sıcaklığa sahip tahminleri içeren bir liste oluştur
+        return maxTempMap.values.toList()
+    }
+
+
 
     fun formatDate(dtTxt: String): String {
         // OpenWeatherMap API'sinden gelen tarih formatı

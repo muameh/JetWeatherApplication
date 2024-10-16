@@ -2,6 +2,7 @@ package com.mehmetbaloglu.jetweatherforecast.ui.screens
 
 import android.util.Log
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,13 +22,17 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -85,6 +90,8 @@ fun MainContent(fiveDaysForecast: FiveDaysForecast, modifier: Modifier = Modifie
     val currentWeatherItem = fiveDaysForecast.listItem?.get(0)
     val imageUrl = BASE_ICON_URL + currentWeatherItem?.weatherItem?.first()?.icon + ICON_SUFFIX
 
+    // Kartların hangi indeksinin genişletildiğini saklamak için bir MutableState
+    val expandedCardIndex = remember { mutableStateOf(-1) }
 
     Column(
         modifier = modifier
@@ -112,7 +119,7 @@ fun MainContent(fiveDaysForecast: FiveDaysForecast, modifier: Modifier = Modifie
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                WeatherStateImage(imageUrl = imageUrl)
+                WeatherStateImage(imageUrl = imageUrl,modifier = Modifier.size(80.dp))
                 Row(
                     horizontalArrangement = Arrangement.Center,
                     verticalAlignment = Alignment.Top
@@ -140,18 +147,23 @@ fun MainContent(fiveDaysForecast: FiveDaysForecast, modifier: Modifier = Modifie
         Text(text = "The Next Five Days", fontWeight = FontWeight.SemiBold, fontSize = 20.sp)
 
         val uniqueDays = Utils.getUniqueDays(fiveDaysForecast.listItem)
+        val uniqueDaysWithMaxTemp = Utils.getUniqueDaysWithMaxTemp(fiveDaysForecast.listItem)
 
         LazyColumn(
-            modifier= Modifier.padding(2.dp)
+            modifier = Modifier.padding(2.dp)
         ) {
-            items(fiveDaysForecast.listItem){
-                if (it != null) {
-                    if (it in uniqueDays){
-                        CardDesignForUniqueDays(listItem = it)
+            items(uniqueDaysWithMaxTemp) { uniqueDayItem ->
+                ExpandableDayCard(
+                    listItem = uniqueDayItem,
+                    allItemsForDay = fiveDaysForecast.listItem,
+                    expandedIndex = expandedCardIndex.value,
+                    onCardClick = { index ->
+                        expandedCardIndex.value = if (expandedCardIndex.value == index) -1 else index
                     }
-                }
+                )
             }
         }
+
 
 
     }
@@ -159,10 +171,10 @@ fun MainContent(fiveDaysForecast: FiveDaysForecast, modifier: Modifier = Modifie
 }
 
 @Composable
-fun WeatherStateImage(imageUrl: String) {
+fun WeatherStateImage(imageUrl: String, modifier: Modifier) {
     Image(
         painter = rememberAsyncImagePainter(model = imageUrl),
-        modifier = Modifier.size(80.dp),
+        modifier = modifier.size(80.dp),
         contentDescription = "weather icon"
     )
 }
@@ -214,36 +226,74 @@ fun HumidityWindPressureRow(listItem: ListItem){
     }
 }
 
-
-@Preview
 @Composable
-fun CardDesignForUniqueDays(listItem: ListItem = ListItem(null,null,null,null,null,null,null,null,null)){
+fun ExpandableDayCard(
+    listItem: ListItem,
+    allItemsForDay: List<ListItem?>?,
+    expandedIndex: Int,
+    onCardClick: (Int) -> Unit
+) {
+    // Bu kartın indeksi
+    val currentIndex = allItemsForDay?.indexOf(listItem) ?: -1
+
     Surface(
         modifier = Modifier
-            .padding(4.dp)
+            .padding(1.dp)
             .fillMaxWidth()
-            .height(50.dp),
-        shape = CircleShape.copy(topEnd = CornerSize(6.dp)),
+            .clickable { onCardClick(currentIndex) }, // Tıklanınca genişlemeyi tetikle
     ) {
-        val iconUrl = BASE_ICON_URL+ listItem.weatherItem?.get(0)?.icon.toString() + ICON_SUFFIX
-        val formattedDate = Utils.formatDayOfWeek(listItem.dtTxt.toString())
+        Column {
+            // Günü gösteren satır
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier
+                    .padding(start = 4.dp, end = 4.dp, top = 1.dp,bottom = 1.dp)
+                    .fillMaxWidth()
+                    .height(70.dp)
+            ) {
+                val iconUrl = BASE_ICON_URL + listItem.weatherItem?.get(0)?.icon.toString() + ICON_SUFFIX
+                val formattedDate = Utils.formatDayOfWeek(listItem.dtTxt.toString())
 
-        Row (
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.padding(start = 10.dp, end = 10.dp)
-        ){
-            Text(text = formattedDate)
-            WeatherStateImage(imageUrl = iconUrl)
-            Text(text = listItem.weatherItem?.get(0)?.main.toString())
-            Text(text = listItem.main?.tempMax?.toInt().toString()+"°", color = Color.Blue)
-            Text(text = listItem.main?.tempMin?.toInt().toString()+"°", color = Color.LightGray)
+                Text(text = formattedDate)
+                WeatherStateImage(imageUrl = iconUrl,modifier = Modifier.size(60.dp))
+                Text(text = listItem.weatherItem?.get(0)?.main.toString(),)
+                Text( text = listItem.main?.tempMax?.toInt().toString() + "°", color = Color.Blue)
+                //Text(text = listItem.main?.tempMin?.toInt().toString() + "°", color = Color.LightGray)
+            }
+
+            // Kart genişlediğinde altındaki saatlik verileri göster
+            if (expandedIndex == currentIndex) {
+                HourlyForecastForDay(day = listItem, allItemsForDay = allItemsForDay)
+            }
         }
     }
-    HorizontalDivider(modifier=Modifier.padding(start = 15.dp, end = 15.dp, top = 0.dp, bottom = 10.dp))
-
 }
 
+@Composable
+fun HourlyForecastForDay(day: ListItem, allItemsForDay: List<ListItem?>?) {
+    val dayDate = day.dtTxt?.substring(0, 10) // Günün tarihini "yyyy-mm-dd" formatında alıyoruz
+
+    allItemsForDay?.filter { it?.dtTxt?.startsWith(dayDate!!) == true }?.forEach { hourItem ->
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp, vertical = 4.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            val hour = hourItem?.dtTxt?.substring(11, 16) // Saat kısmını alıyoruz "hh:mm"
+            val hourlyIcon = BASE_ICON_URL + hourItem!!.weatherItem?.get(0)?.icon.toString() + ICON_SUFFIX
+            Text(text = hour ?: "",  modifier = Modifier.weight(1f))
+            Text(
+                text = hourItem.main?.tempMax?.toInt().toString() + "°C",
+                fontWeight = FontWeight.Bold,  modifier = Modifier.weight(1f),
+                color = Color.Blue
+            )
+            WeatherStateImage(imageUrl = hourlyIcon, modifier = Modifier.size(40.dp).weight(1f))
+            Text(text = hourItem.weatherItem?.get(0)?.description ?: "", fontStyle = FontStyle.Italic,  modifier = Modifier.weight(1f))
+        }
+    }
+}
 
 
 

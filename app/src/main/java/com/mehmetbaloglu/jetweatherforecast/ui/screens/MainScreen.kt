@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -22,7 +21,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
@@ -32,8 +30,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -43,23 +39,21 @@ import com.mehmetbaloglu.jetweatherforecast.R
 import com.mehmetbaloglu.jetweatherforecast.data.DataOrException
 import com.mehmetbaloglu.jetweatherforecast.data.model.FiveDaysForecast.FiveDaysForecast
 import com.mehmetbaloglu.jetweatherforecast.data.model.FiveDaysForecast.ListItem
+import com.mehmetbaloglu.jetweatherforecast.navigation.WeatherScreens
 import com.mehmetbaloglu.jetweatherforecast.utils.Constants.BASE_ICON_URL
 import com.mehmetbaloglu.jetweatherforecast.utils.Constants.ICON_SUFFIX
 import com.mehmetbaloglu.jetweatherforecast.utils.Utils
 import com.mehmetbaloglu.jetweatherforecast.widgets.WeatherAppBar
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 
 @Composable
 fun MainScreen(
     navController: NavController,
-    mainViewModel: MainViewModel = hiltViewModel()
+    mainViewModel: MainViewModel = hiltViewModel(),
+    city: String?
 ) {
-
     val weatherData = produceState<DataOrException<FiveDaysForecast, Boolean, Exception>>(
         initialValue = DataOrException(loading = true),
-        producer = { value = mainViewModel.getFiveDaysForecast("ankara") }).value
+        producer = { value = mainViewModel.getFiveDaysForecast(city.toString()) }).value
 
     if (weatherData.loading == true) {
         CircularProgressIndicator()
@@ -74,7 +68,12 @@ fun MainScaffold(fiveDaysForecast: FiveDaysForecast, navController: NavControlle
         topBar = {
             WeatherAppBar(
                 title = "${fiveDaysForecast.city?.name.toString()}, ${fiveDaysForecast.city?.country}",
-                elevation = 4.dp
+                elevation = 4.dp,
+                navController = navController,
+                onAddActionClicked = {
+                    navController.navigate(WeatherScreens.SearchScreen.name)
+                }
+
             )
         }
     ) { innerPadding ->
@@ -101,7 +100,6 @@ fun MainContent(fiveDaysForecast: FiveDaysForecast, modifier: Modifier = Modifie
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text(
-//            text = currentWeatherItem?.dtTxt.toString(),
             text = "Now",
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.primary,
@@ -146,7 +144,6 @@ fun MainContent(fiveDaysForecast: FiveDaysForecast, modifier: Modifier = Modifie
         HorizontalDivider(modifier=Modifier.padding(start = 15.dp, end = 15.dp, top = 0.dp, bottom = 10.dp))
         Text(text = "The Next Five Days", fontWeight = FontWeight.SemiBold, fontSize = 20.sp)
 
-        val uniqueDays = Utils.getUniqueDays(fiveDaysForecast.listItem)
         val uniqueDaysWithMaxTemp = Utils.getUniqueDaysWithMaxTemp(fiveDaysForecast.listItem)
 
         LazyColumn(

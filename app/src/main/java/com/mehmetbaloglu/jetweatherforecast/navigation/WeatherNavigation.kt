@@ -10,7 +10,7 @@ import androidx.navigation.navArgument
 import com.mehmetbaloglu.jetweatherforecast.ui.screens.AboutScreen
 import com.mehmetbaloglu.jetweatherforecast.ui.screens.FavoriteScreen
 import com.mehmetbaloglu.jetweatherforecast.ui.screens.MainScreen
-import com.mehmetbaloglu.jetweatherforecast.ui.screens.MainViewModel
+import com.mehmetbaloglu.jetweatherforecast.ui.viewmodels.MainViewModel
 import com.mehmetbaloglu.jetweatherforecast.ui.screens.SearchScreen
 import com.mehmetbaloglu.jetweatherforecast.ui.screens.SettingsScreen
 import com.mehmetbaloglu.jetweatherforecast.ui.screens.WeatherSplashScreen

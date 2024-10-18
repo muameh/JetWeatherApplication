@@ -1,8 +1,10 @@
 package com.mehmetbaloglu.jetweatherforecast.di
 
 import android.content.Context
-import com.mehmetbaloglu.jetweatherforecast.navigation.WeatherScreens
+import androidx.room.Room
 import com.mehmetbaloglu.jetweatherforecast.retrofit.WeatherApi
+import com.mehmetbaloglu.jetweatherforecast.room.WeatherDB
+import com.mehmetbaloglu.jetweatherforecast.room.WeatherDao
 import com.mehmetbaloglu.jetweatherforecast.utils.Constants
 import dagger.Module
 import dagger.Provides
@@ -20,7 +22,7 @@ class AppModule {
 
     @Provides
     @Singleton
-    fun provideWeatherApi() : WeatherApi {
+    fun provideWeatherApi(): WeatherApi {
         return Retrofit.Builder()
             .baseUrl(Constants.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
@@ -28,6 +30,21 @@ class AppModule {
             .create(WeatherApi::class.java)
     }
 
+    @Provides
+    @Singleton
+    fun provideWeatherDao(weatherDB: WeatherDB): WeatherDao = weatherDB.weatherDao()
+
+    @Provides
+    @Singleton
+    fun provideWeatherDB(@ApplicationContext context: Context): WeatherDB =
+        Room
+            .databaseBuilder(
+                context,
+                WeatherDB::class.java,
+                "weather_db"
+            )
+            .fallbackToDestructiveMigration()
+            .build()
 
 
 }

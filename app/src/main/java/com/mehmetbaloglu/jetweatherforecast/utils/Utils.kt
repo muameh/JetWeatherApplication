@@ -1,7 +1,9 @@
 package com.mehmetbaloglu.jetweatherforecast.utils
 import com.mehmetbaloglu.jetweatherforecast.data.model.FiveDaysForecast.ListItem
+import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import java.util.Date
 import java.util.Locale
 
 
@@ -76,5 +78,13 @@ object Utils {
         // İstenen formatta String olarak geri döndür
         return date.format(outputFormatter)
     }
+
+    fun formatUnixTimeToHoursAndMinutes(timestamp: Long): String {
+        // Unix timestamp'i milisaniyeye çevirmek için 1000 ile çarpıyoruz
+        val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
+        val date = Date(timestamp * 1000) // Saniyeyi milisaniyeye çeviriyoruz
+        return sdf.format(date)
+    }
+
 
 }

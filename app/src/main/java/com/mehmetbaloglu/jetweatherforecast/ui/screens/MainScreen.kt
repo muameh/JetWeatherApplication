@@ -36,6 +36,7 @@ import androidx.navigation.NavController
 import coil.compose.rememberAsyncImagePainter
 import com.mehmetbaloglu.jetweatherforecast.R
 import com.mehmetbaloglu.jetweatherforecast.data.model.DataOrException
+import com.mehmetbaloglu.jetweatherforecast.data.model.FiveDaysForecast.City
 import com.mehmetbaloglu.jetweatherforecast.data.model.FiveDaysForecast.FiveDaysForecast
 import com.mehmetbaloglu.jetweatherforecast.data.model.FiveDaysForecast.ListItem
 import com.mehmetbaloglu.jetweatherforecast.navigation.WeatherScreens
@@ -87,6 +88,7 @@ fun MainScaffold(fiveDaysForecast: FiveDaysForecast, navController: NavControlle
 @Composable
 fun MainContent(fiveDaysForecast: FiveDaysForecast, modifier: Modifier = Modifier) {
     val currentWeatherItem = fiveDaysForecast.listItem?.get(0)
+    val currentCity = fiveDaysForecast.city
     val imageUrl = BASE_ICON_URL + currentWeatherItem?.weatherItem?.first()?.icon + ICON_SUFFIX
 
     // Kartların hangi indeksinin genişletildiğini saklamak için bir MutableState
@@ -141,8 +143,9 @@ fun MainContent(fiveDaysForecast: FiveDaysForecast, modifier: Modifier = Modifie
 
         }
         HumidityWindPressureRow(listItem = currentWeatherItem!!)
+        SunRiseSunSetRow(currentCity = currentCity!!)
         HorizontalDivider(modifier=Modifier.padding(start = 15.dp, end = 15.dp, top = 0.dp, bottom = 10.dp))
-        Text(text = "The Next Five Days", fontWeight = FontWeight.SemiBold, fontSize = 20.sp)
+        Text(text = "This Week", fontWeight = FontWeight.SemiBold, fontSize = 20.sp)
 
         val uniqueDaysWithMaxTemp = Utils.getUniqueDaysWithMaxTemp(fiveDaysForecast.listItem)
 
@@ -165,6 +168,42 @@ fun MainContent(fiveDaysForecast: FiveDaysForecast, modifier: Modifier = Modifie
 
     }
 
+}
+
+@Composable
+private fun SunRiseSunSetRow(currentCity: City) {
+    Row(
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.fillMaxWidth().padding(start = 5.dp,end = 5.dp)
+    ) {
+        Row {
+            Icon(
+                painter = painterResource(id = R.drawable.sunrise),
+                contentDescription = "sunrise icon",
+                modifier = Modifier.size(20.dp).padding(2.dp)
+            )
+            Text(
+                text = Utils.formatUnixTimeToHoursAndMinutes(currentCity.sunrise?.toLong() ?: 0L),
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 14.sp,
+                modifier = Modifier.padding(start = 5.dp)
+            )
+        }
+        Row {
+            Text(
+                text = Utils.formatUnixTimeToHoursAndMinutes(currentCity.sunset?.toLong() ?: 0L),
+                fontWeight = FontWeight.SemiBold,
+                fontSize = 14.sp,
+                modifier = Modifier.padding(start = 5.dp)
+            )
+            Icon(
+                painter = painterResource(id = R.drawable.sunset),
+                contentDescription = "sunset icon",
+                modifier = Modifier.size(20.dp).padding(2.dp)
+            )
+        }
+    }
 }
 
 @Composable
@@ -245,7 +284,7 @@ fun ExpandableDayCard(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier
-                    .padding(start = 4.dp, end = 4.dp, top = 1.dp,bottom = 1.dp)
+                    .padding(start = 4.dp, end = 4.dp, top = 1.dp, bottom = 1.dp)
                     .fillMaxWidth()
                     .height(70.dp)
             ) {
@@ -286,7 +325,9 @@ fun HourlyForecastForDay(day: ListItem, allItemsForDay: List<ListItem?>?) {
                 fontWeight = FontWeight.Bold,  modifier = Modifier.weight(1f),
                 color = Color.Blue
             )
-            WeatherStateImage(imageUrl = hourlyIcon, modifier = Modifier.size(40.dp).weight(1f))
+            WeatherStateImage(imageUrl = hourlyIcon, modifier = Modifier
+                .size(40.dp)
+                .weight(1f))
             Text(text = hourItem.weatherItem?.get(0)?.description ?: "", fontStyle = FontStyle.Italic,  modifier = Modifier.weight(1f))
         }
     }

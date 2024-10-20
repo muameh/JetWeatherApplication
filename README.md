@@ -61,12 +61,17 @@ Contributions are welcome! If you have suggestions for improvements or features,
 
 By showcasing the latest Android technologies and adhering to best practices, **Jet Weather Forecast** is not just a weather application but a demonstration of efficient architecture and modern development techniques. Join me on this journey to create a better weather forecasting experience!
 
-![screen1](screenShots\Screenshot_1729440292.png)
-![screen1](screenShots\Screenshot_1729440300.png)
-![screen1](screenShots\Screenshot_1729440308.png)
-![screen1](screenShots\Screenshot_1729440329.png)
-![screen1](screenShots\Screenshot_1729440350.png)
-![screen1](screenShots\Screenshot_1729444753.png)
-![screen1](screenShots\Screenshot_1729444784.png)
-![screen1](screenShots\Screenshot_1729445446.png)
+## Screenshots
+
+Below are some screenshots of the app in action:
+
+![Main Screen](screenShots/Screenshot_1729440292.png)
+![Weather Details](screenShots/Screenshot_1729440300.png)
+![Options](screenShots/Screenshot_1729440308.png)
+![Search Cities](screenShots/Screenshot_1729440329.png)
+![Favorite Cities](screenShots/Screenshot_1729440350.png)
+![Settings Screen](screenShots/Screenshot_1729444753.png)
+![About Screen](screenShots/Screenshot_1729444784.png)
+![Forecast Overview](screenShots/Screenshot_1729445446.png)
+
 

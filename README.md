@@ -44,7 +44,7 @@ To get started with the Jet Weather Forecast app, follow these steps:
 
 1. **Clone the repository**:
     ```bash
-    git clone https://github.com/yourusername/jet-weather-forecast.git
+    git clone https://github.com/muameh/JetWeatherApplication.git
     ```
 2. **Open the project** in Android Studio.
 3. **Sync Gradle** to download dependencies.
@@ -57,10 +57,8 @@ To get started with the Jet Weather Forecast app, follow these steps:
 
 Contributions are welcome! If you have suggestions for improvements or features, feel free to fork the repository and submit a pull request.
 
-## License
-
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
 ---
 
 By showcasing the latest Android technologies and adhering to best practices, **Jet Weather Forecast** is not just a weather application but a demonstration of efficient architecture and modern development techniques. Join me on this journey to create a better weather forecasting experience!
+
+![Alternatif Metin]("screenShots\Screenshot_1729440292.png")

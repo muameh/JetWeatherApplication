@@ -61,4 +61,4 @@ Contributions are welcome! If you have suggestions for improvements or features,
 
 By showcasing the latest Android technologies and adhering to best practices, **Jet Weather Forecast** is not just a weather application but a demonstration of efficient architecture and modern development techniques. Join me on this journey to create a better weather forecasting experience!
 
-![Alternatif Metin]("screenShots\Screenshot_1729440292.png")
+![screen1]("C:\Users\MEHMET\Desktop\Android Projects\JetWeatherForecast\screenShots\Screenshot_1729440292.png")

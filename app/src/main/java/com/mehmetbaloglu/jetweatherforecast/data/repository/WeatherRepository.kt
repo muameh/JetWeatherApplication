@@ -15,7 +15,7 @@ class WeatherRepository @Inject constructor(
 ) {
 
     //it is related to the network request
-    suspend fun getFiveDaysForecast(cityQuery: String, units: String = "metric")
+    suspend fun getFiveDaysForecast(cityQuery: String, units: String)
             : DataOrException<FiveDaysForecast, Boolean, Exception> {
         return try {
             DataOrException(data = api.getFiveDaysForecast(cityQuery, units = units))

@@ -20,6 +20,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
@@ -52,14 +53,24 @@ fun MainScreen(
     mainViewModel: MainViewModel = hiltViewModel(),
     city: String?
 ) {
-    val weatherData = produceState<DataOrException<FiveDaysForecast, Boolean, Exception>>(
-        initialValue = DataOrException(loading = true),
-        producer = { value = mainViewModel.getFiveDaysForecast(city.toString()) }).value
+    val unitFromDB = mainViewModel.unitList.collectAsState().value
+    var unit = remember { mutableStateOf("imperial") }
+    var isImperial = remember { mutableStateOf(false) }
 
-    if (weatherData.loading == true) {
-        CircularProgressIndicator()
-    } else if (weatherData.data != null) {
-        MainScaffold(weatherData.data!!, navController)
+    if (!unitFromDB.isNullOrEmpty()) {
+        unit.value = unitFromDB[0].unit.split(" ")[0].lowercase()
+        isImperial.value = unit.value == "imperial"
+
+        val weatherData = produceState<DataOrException<FiveDaysForecast, Boolean, Exception>>(
+            initialValue = DataOrException(loading = true),
+            producer = { value = mainViewModel.getFiveDaysForecast(city.toString(), units = unit.value) }).value
+
+        if (weatherData.loading == true) {
+            CircularProgressIndicator()
+        } else if (weatherData.data != null) {
+            MainScaffold(weatherData.data!!, navController)
+        }
+
     }
 }
 

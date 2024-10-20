@@ -25,6 +25,7 @@ class MainViewModel @Inject constructor(private val repository: WeatherRepositor
         getFavorites()
     }
 
+
     private val _favList = MutableStateFlow<List<FavoriteCity>>(emptyList())
     val favList = _favList.asStateFlow()
 
@@ -32,8 +33,9 @@ class MainViewModel @Inject constructor(private val repository: WeatherRepositor
     val unitList = _unitList.asStateFlow()
 
     //network request
-    suspend fun getFiveDaysForecast(city: String): DataOrException<FiveDaysForecast, Boolean, Exception> {
-        return repository.getFiveDaysForecast(cityQuery = city)
+    suspend fun getFiveDaysForecast(city: String, units: String): DataOrException<FiveDaysForecast, Boolean, Exception> {
+        //val unit = if (unitList.value.isNotEmpty()) unitList.value[0].unit else "metric"
+        return repository.getFiveDaysForecast(cityQuery = city, units = units)
     }
 
     //favorite table
@@ -46,10 +48,8 @@ class MainViewModel @Inject constructor(private val repository: WeatherRepositor
             .collect { listOfFavs ->
                 if (listOfFavs.isEmpty()) {
                     _favList.value = emptyList()
-                    Log.d("TAG", "Empty favs")
                 } else {
                     _favList.value = listOfFavs
-                    Log.d("TAG", "${favList.value}")
                 }
             }
 
@@ -72,10 +72,10 @@ class MainViewModel @Inject constructor(private val repository: WeatherRepositor
     private fun getUnits() = viewModelScope.launch(Dispatchers.IO) {
         repository.getUnits().distinctUntilChanged().collect { listOfUnits ->
             if (listOfUnits.isNullOrEmpty()) {
-                Log.d("TAG", "Empty list")
+                Log.d("TAG", "getUnits() return -> Empty list")
             } else {
                 _unitList.value = listOfUnits
-                Log.d("TAG", "${unitList.value}")
+                Log.d("TAG", "getUnits() return -> ${unitList.value}")
             }
         }
     }
@@ -89,7 +89,7 @@ class MainViewModel @Inject constructor(private val repository: WeatherRepositor
     fun updateUnit(unit: Unit) =
         viewModelScope.launch(Dispatchers.IO) { repository.updateUnit(unit) }
 
-    fun deleteAllUnits() = viewModelScope.launch (Dispatchers.IO) { repository.deleteAllUnits() }
+    fun deleteAllUnits() = viewModelScope.launch(Dispatchers.IO) { repository.deleteAllUnits() }
 
 
 }

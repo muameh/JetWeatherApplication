@@ -1,5 +1,6 @@
 package com.mehmetbaloglu.jetweatherforecast.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -61,6 +62,8 @@ fun MainScreen(
         unit.value = unitFromDB[0].unit.split(" ")[0].lowercase()
         isImperial.value = unit.value == "imperial"
 
+        Log.d("TAG", "${unit.value}")
+
         val weatherData = produceState<DataOrException<FiveDaysForecast, Boolean, Exception>>(
             initialValue = DataOrException(loading = true),
             producer = { value = mainViewModel.getFiveDaysForecast(city.toString(), units = unit.value) }).value
@@ -71,6 +74,8 @@ fun MainScreen(
             MainScaffold(weatherData.data!!, navController)
         }
 
+    } else{
+        Log.e("TAG", "MainScreen: No Units Found")
     }
 }
 

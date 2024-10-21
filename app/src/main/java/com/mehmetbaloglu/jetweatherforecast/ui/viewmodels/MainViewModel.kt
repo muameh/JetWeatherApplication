@@ -1,6 +1,5 @@
 package com.mehmetbaloglu.jetweatherforecast.ui.viewmodels
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mehmetbaloglu.jetweatherforecast.data.model.DataOrException
@@ -33,8 +32,10 @@ class MainViewModel @Inject constructor(private val repository: WeatherRepositor
     val unitList = _unitList.asStateFlow()
 
     //network request
-    suspend fun getFiveDaysForecast(city: String, units: String): DataOrException<FiveDaysForecast, Boolean, Exception> {
-        //val unit = if (unitList.value.isNotEmpty()) unitList.value[0].unit else "metric"
+    suspend fun getFiveDaysForecast(
+        city: String,
+        units: String
+    ): DataOrException<FiveDaysForecast, Boolean, Exception> {
         return repository.getFiveDaysForecast(cityQuery = city, units = units)
     }
 
@@ -52,7 +53,6 @@ class MainViewModel @Inject constructor(private val repository: WeatherRepositor
                     _favList.value = listOfFavs
                 }
             }
-
     }
 
     fun insertFavorite(favoriteCity: FavoriteCity) =
@@ -72,10 +72,9 @@ class MainViewModel @Inject constructor(private val repository: WeatherRepositor
     private fun getUnits() = viewModelScope.launch(Dispatchers.IO) {
         repository.getUnits().distinctUntilChanged().collect { listOfUnits ->
             if (listOfUnits.isNullOrEmpty()) {
-                Log.d("TAG", "getUnits() return -> Empty list")
+                _unitList.value = listOf(Unit("metric"))
             } else {
                 _unitList.value = listOfUnits
-                Log.d("TAG", "getUnits() return -> ${unitList.value}")
             }
         }
     }
